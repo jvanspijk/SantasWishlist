@@ -11,7 +11,6 @@ public class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>();
-                //configure test services?
+                webBuilder.UseStartup<Startup>();                
             });
 }
