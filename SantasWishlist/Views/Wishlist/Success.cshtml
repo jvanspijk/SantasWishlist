@@ -1,0 +1,72 @@
+﻿@model SantasWishlistWeb.Viewmodels.WishlistModel
+@{
+    ViewData["Title"] = "Success";
+}
+@if (Model.ChosenGiftNames != null && User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <h2>Bedankt voor het kiezen van je cadeautjes @Model.User.Name</h2>
+    <h3>Kloppen de onderstaande cadeautjes?</h3>
+    //Remember to validate the data again
+    //User.ID and chosengifts as invisible input
+    <div class="container">
+        <ul>
+            @foreach (var giftName in Model.ChosenGiftNames)
+            {
+                <li>
+                    @giftName
+                </li>
+            }
+            @foreach (var giftName in Model.GetExtraGiftsList())
+            {
+                <li>
+                    @giftName
+                </li>
+            }
+        </ul>
+
+    </div>
+    <form asp-action="Success">
+        <input asp-for="User.Id" type="hidden" />
+        <input asp-for="User.Name" type="hidden" />
+        <input asp-for="User.Age" type="hidden" />
+        <input asp-for="User.WasGood" type="hidden" />
+        <input asp-for="User.Lied" type="hidden" />
+        <input asp-for="User.GoodDescription" type="hidden" />
+        <input asp-for="ChosenGiftNames" type="hidden" />
+        <input asp-for="ExtraGifts" type="hidden"/>
+        @foreach (var gift in Model.ChosenGiftNames ?? new())
+        {
+            <input type="hidden"
+           name="ChosenGiftNames"
+           value="@gift"
+           @(Html.Raw("checked=\"checked\"")) />
+        }
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <input type="submit" value="Terug" class="btn btn-primary btn-lg" asp-controller="Wishlist" asp-action="ChooseGiftsBack" />
+                    </div>
+                </div>
+                <div class="col-sm">
+                </div>
+                <div class="col-sm">
+                    <div class="form-group">
+                        <input type="submit" value="Deze cadeautjes wil ik!" class="btn btn-success btn-lg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Oeps!</h4>
+        <p class="mb-0">Er is iets mis gegaan met het ophalen van de cadeautjes. </p>
+        <p>De Kerstman en zijn elfjes zijn druk bezig om het op te lossen!</p>
+        <hr>
+        <p class="mb-0">Je kunt het later opnieuw proberen.</p>
+    </div>
+}

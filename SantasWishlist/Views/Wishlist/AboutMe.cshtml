@@ -1,0 +1,41 @@
+﻿@model SantasWishlistWeb.Viewmodels.UserModel
+@{
+    ViewData["Title"] = "About me";
+}
+<h1>
+    Welkom @Model.Name
+</h1>
+<p>
+    De Kerstman heeft gevraagd of jij je verlanglijstje in wil vullen!
+</p>
+<p>
+    Voor we cadeautjes uitkiezen moeten we je eerst wat vragen.
+</p>
+
+<form asp-action="AboutMe">    
+    <input asp-for="Id" type="hidden"/>
+    <input asp-for="Name" type="hidden"/>
+    <div class="form-group mt-2">
+        <label asp-for="Age">Hoe oud ben jij?</label>
+        <input asp-for="Age" class="form-control">
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>    
+    <div class="form-group mt-2">
+        <label asp-for="WasGood">Ben je braaf geweest?</label>
+        <br/>
+        <input type="radio" asp-for="WasGood" value="true" />Heel braaf!<br />
+        <input type="radio" asp-for="WasGood" value="true" />Een beetje braaf...<br />
+        <input type="radio" asp-for="WasGood" value="false" />Ik heb het geprobeerd.<br />
+        <span asp-validation-for="WasGood" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-lg-2">
+        <label asp-for="GoodDescription">Wat heb je gedaan dat je zo braaf bent?</label>
+        <textarea asp-for="GoodDescription" class="form-control" rows="1"></textarea>
+        <span asp-validation-for="GoodDescription" class="text-danger"></span>
+        <p class="text-muted">Vul deze vraag alleen in als je braaf bent geweest!</p>
+    </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <input type="submit" value="Naar de volgende stap!" class="btn btn-primary" />
+    </div>
+</form>

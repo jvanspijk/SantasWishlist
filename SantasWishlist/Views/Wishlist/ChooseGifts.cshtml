@@ -1,0 +1,148 @@
+﻿@model SantasWishlistWeb.Viewmodels.WishlistModel
+@{
+    ViewData["Title"] = "Choose gifts";
+}
+
+<div class="container">
+    <h1>
+        Bedankt @Model.User.Name!
+    </h1>
+    <p>
+        Nu is het tijd om je cadeautjes uit te kiezen!
+    </p>
+    <p>
+        De cadeautjes zijn opgedeeld in 4 categorieën en je mag voor elke categorie kiezen welke cadeautjes je wil!
+    </p>
+</div>
+
+@if (Model.Gifts != null)
+{
+    <form asp-action="ChooseGifts">
+        <input asp-for="User.Id" type="hidden" />
+        <input asp-for="User.Name" type="hidden" />
+        <input asp-for="User.Age" type="hidden" />
+        <input asp-for="User.Lied" type="hidden" />
+        <input asp-for="User.WasGood" type="hidden" />
+        <input asp-for="User.GoodDescription" type="hidden" />
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        <div class="container">
+            <div class="row">
+                <div class="col" id="WantCheckboxes">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                Something you want!
+                            </h2>
+                            <div class="card-text">
+                                @foreach (var wantGift in Model.GetWantGifts())
+                                {
+                                     @:<div class="row-6 mb-1">
+                                <input type="checkbox"
+                                    name="ChosenGiftNames"
+                                    value="@wantGift.Name"
+                                    @(Html.Raw(wantGift.IsChosen ? "checked=\"checked\"" : "")) />
+                                @: @wantGift.Name
+                            @:</div> 
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" id="NeedCheckboxes">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                Something you need!
+                            </h2>
+                            <div class="card-text">
+                                @foreach (var needGift in Model.GetNeedGifts())
+                                {
+                                    @:<div class="row-6 mb-1">
+                                <input type="checkbox"
+                                    name="ChosenGiftNames"
+                                    value="@needGift.Name"
+                                    @(Html.Raw(needGift.IsChosen ? "checked=\"checked\"" : "")) />
+                                @: @needGift.Name
+                            @:</div>    
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-100"></div>
+
+                <div class="col" id="WearCheckboxes">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                Something to wear!
+                            </h2>
+                            <div class="card-text">
+                                @foreach(var wearGift in Model.GetWearGifts())
+                                {
+                                    @:<div class="row-6 mb-1">
+                                <input type="checkbox"
+                                    name="ChosenGiftNames"
+                                    value="@wearGift.Name"
+                                    @(Html.Raw(wearGift.IsChosen ? "checked=\"checked\"" : "")) />
+                                @: @wearGift.Name
+                            @:</div>                                 
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" id="ReadCheckboxes">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                Something to read!
+                            </h2>
+                            <div class="card-text">
+                                @foreach (var readGift in Model.GetReadGifts())
+                                {
+                                    @:<div class="row-6 mb-1">
+                                <input type="checkbox"
+                                    name="ChosenGiftNames"
+                                    value="@readGift.Name"
+                                    @(Html.Raw(readGift.IsChosen ? "checked=\"checked\"" : "")) />
+                                @: @readGift.Name
+                            @:</div> 
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-100"></div>
+                <div class="row mt-2" id="ExtraGifts">
+                    <h2>Staat wat je wil er niet tussen?</h2>
+                    <div class="form-group mt-lg-2">
+                        <textarea asp-for="ExtraGifts" class="form-control" rows="1"></textarea>
+                        <span asp-validation-for="ExtraGifts" class="text-danger"></span>
+                        <p class="text-muted">
+                            Vul deze vraag alleen in als je zeker weet dat het cadeautje wat je wil niet in de bovenstaande lijst staat!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Naar afronden!" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Oeps!</h4>
+        <p class="mb-0">Er is iets mis gegaan met het ophalen van de cadeautjes. </p>
+        <p>De Kerstman en zijn elfjes zijn druk bezig om het op te lossen!</p>
+        <hr>
+        <p class="mb-0">Je kunt het later opnieuw proberen.</p>
+    </div>
+}
+

@@ -1,0 +1,34 @@
+﻿@model SantasWishlistWeb.Viewmodels.RegisterForm
+@{
+    ViewData["Title"] = "Create";
+}
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group mt-lg-2">
+        <label asp-for="NamesInput">Welke kinderen mogen deze keer hun verlanglijstje invullen?</label>
+        <textarea asp-for="NamesInput" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="NamesInput" class="text-danger"></span>
+    </div>
+    <div class="mt-2">
+        <p>Zijn deze kinderen braaf geweest?</p>
+    </div>
+    <div class="form-group form-check form-switch mt-2">
+        <label asp-for="WereGood" class="form-check-label">Ja deze kinderen zijn braaf!</label>
+        <input asp-for="WereGood" type="checkbox" class="form-check-input">
+        <span asp-validation-for="WereGood" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-2">
+        <label asp-for="Password">Password</label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Vul hier een wachtwoord in">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Accounts voor kindjes maken!" class="btn btn-primary" />
+    </div>    
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

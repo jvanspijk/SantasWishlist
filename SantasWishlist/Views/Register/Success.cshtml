@@ -1,0 +1,27 @@
+﻿@model SantasWishlistWeb.Viewmodels.RegisterForm
+@{
+    ViewData["Title"] = "Success";
+}
+
+@if(Model.NamesInput !=null && Model.WereGood != false && Model.Password != null)
+{
+    <div class="alert alert-success" role="alert">
+        <h1 class="alert-heading">Goed gewerkt, Kerstman!</h1>
+        <p>De volgende kindjes kunnen nu inloggen: </p>
+        <p>@Model.NamesInput</p>
+        <hr>
+        <p class="mb-0">En hiervoor gebruiken ze het wachtwoord: </p>
+        <h3>@Model.Password</h3>
+    </div>
+}
+else
+{
+        <div class="alert alert-warning" role="alert">
+          <h4 class="alert-heading">Oeps!</h4>
+          <p class ="mb-0">Er is iets mis gegaan met het ophalen van de gegevens. </p>          
+          <hr>
+          <p class="mb-0">Probeer het later opnieuw.</p>
+        </div>
+}
+
+

@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welkom!</h1>
+    @if (User.Identity.IsAuthenticated)
+    {
+        @if (User.IsInRole("Santa"))
+        {
+            <p>U bent succesvol ingelogd.</p>            
+        }
+        else if (User.IsInRole("Child"))
+        {
+            <p>Je bent succesvol ingelogd.</p>            
+        }
+    }
+</div>
