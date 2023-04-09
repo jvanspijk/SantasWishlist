@@ -28,9 +28,23 @@ namespace SantasWishlistWeb.Controllers
         public async Task<IActionResult> Login(LoginForm loginForm)
         {
             var correctCredentials = await CheckCredentialsCorrect(loginForm);
-           
+            
             if (correctCredentials)
-            {                
+            {
+                try
+                {
+                    var user = _userManager.FindByNameAsync(loginForm.UserName).Result;
+                    if(user.SentWishlist)
+                    {
+                        ModelState.AddModelError("","Je hebt al een verlanglijstje ingevuld.");
+                        await _signInManager.SignOutAsync();
+                        return View(loginForm);
+                    }
+                }
+                catch
+                {
+                    return View(loginForm);
+                }
                 return Redirect("/Home");
             }
             else
@@ -56,7 +70,5 @@ namespace SantasWishlistWeb.Controllers
             }
             return false;
         }
-
-
     }
 }

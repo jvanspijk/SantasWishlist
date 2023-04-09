@@ -9,11 +9,10 @@ namespace SantasWishlistWeb.Controllers
     public class RegisterController : Controller
     {
         private UserManager<SantasWishlistUser> _userManager;
-        private SignInManager<SantasWishlistUser> _signInManager;
-        public RegisterController(UserManager<SantasWishlistUser> userManager, SignInManager<SantasWishlistUser> signInManager)
+        
+        public RegisterController(UserManager<SantasWishlistUser> userManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userManager = userManager;            
         }      
 
         
@@ -25,13 +24,20 @@ namespace SantasWishlistWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(RegisterForm form)
-        {            
+        {         
+            if(!ModelState.IsValid)
+            {
+                return View(form);
+            }
+
             try
             {
+                CreateUsers(form);                
                 return RedirectToAction("Success", form);
             }
             catch
             {
+                ModelState.AddModelError("", "Er is iets mis gegaan bij het aanmaken van de accounts.");
                 return View(form);
             }
         }
@@ -40,7 +46,35 @@ namespace SantasWishlistWeb.Controllers
         public IActionResult Success(RegisterForm form)
         {
             return View(form);
-        }     
+        }    
+        
+        private void CreateUsers(RegisterForm form)
+        {
+            var hasher = new PasswordHasher<IdentityUser>();
+
+            var userNames = form.GetNamesList();
+            foreach (var name in userNames)
+            {                
+                SantasWishlistUser user = new();
+                user.UserName = name;                       
+                user.PasswordHash = hasher.HashPassword(user, form.Password);
+                user.WasGood = form.WereGood;
+                user.SentWishlist = false;
+
+                CreateUser(user);
+            }  
+            
+        }
+
+        private bool CreateUser(SantasWishlistUser user)
+        {
+            IdentityResult userResult = _userManager.CreateAsync(user).Result;
+            if(userResult.Succeeded)
+            {
+                return true;
+            }
+            return false;
+        }
         
     }
 }

@@ -96,7 +96,7 @@ namespace SantasWishlistWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Child")]
-        public  IActionResult Success(WishlistModel wishlistModel)
+        public async Task<IActionResult> SuccessAsync(WishlistModel wishlistModel)
         {
             if(!ModelState.IsValid)
             {
@@ -105,7 +105,8 @@ namespace SantasWishlistWeb.Controllers
                 return View(wishlistModel);
             }            
             WishList wishList = CreateWishlist(wishlistModel);
-            //_giftRepository.SendWishList(wishList);
+            _giftRepository.SendWishList(wishList);
+            await SetCurrentUserInactiveAsync();
             return RedirectToAction("Logout", "Account");
         }       
 
@@ -180,6 +181,14 @@ namespace SantasWishlistWeb.Controllers
                 }
             }
             return chosenGifts;
+        }
+
+        private async Task SetCurrentUserInactiveAsync()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(id);
+            user.SentWishlist = true;
+            var result = await _userManager.UpdateAsync(user);            
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using SantasWishlist.Context;
+using SantasWishlist.Domain;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 namespace SantasWishlistWeb.Viewmodels
@@ -42,7 +45,7 @@ namespace SantasWishlistWeb.Viewmodels
                 var splitNames = NamesInput.Split(',');
                 foreach (string name in splitNames)
                 {
-                    namesList.Add(name.Trim());
+                    namesList.Add(name.Trim().ToLower());
                 }
                 return namesList;
             }
@@ -51,7 +54,7 @@ namespace SantasWishlistWeb.Viewmodels
                 string[] names = NamesInput.Split(' ');
                 for(int i = 0; i < names.Length; i++)
                 {
-                    names[i] = names[i].Trim();
+                    names[i] = names[i].Trim().ToLower();
                 }
                 return names.ToList();
             }
@@ -69,7 +72,15 @@ namespace SantasWishlistWeb.Viewmodels
                 {
                     yield return new ValidationResult("Je hebt dezelfde persoon meerdere keren in de lijst staan.");
                 }
-            }                     
+            }
+            foreach(var name in names ?? new())
+            {
+                var repo = validationContext.GetRequiredService<UserManager<SantasWishlistUser>>();
+                if(repo.FindByNameAsync(name).Result != null)
+                {
+                    yield return new ValidationResult($"{name} heeft al een account.");
+                }
+            }
         }
     }
 }
