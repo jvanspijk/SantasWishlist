@@ -187,6 +187,7 @@ namespace SantasWishlistWeb.Viewmodels
         }
         private List<int> CalculateAmountChosenGiftsPerCategory() 
         {
+            var chosenGifts = GetChosenGifts();
             List<int> giftAmountPerCategory = new()
             {
                 GetChosenGifts().Where(g => g.Category == GiftCategory.WANT).Count(),
@@ -263,15 +264,7 @@ namespace SantasWishlistWeb.Viewmodels
                 return disallowedGiftNames;
             }
 
-            IGiftRepository repo;
-            try
-            {
-                repo = context.GetRequiredService<IGiftRepository>();
-            }
-            catch (Exception ex)
-            {
-                repo = new GiftRepository();
-            }
+            IGiftRepository repo = context.GetRequiredService<IGiftRepository>();            
             
             foreach (var gift in GetChosenGifts())
             {
