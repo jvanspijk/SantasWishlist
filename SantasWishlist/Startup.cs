@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using SantasWishlist.Context;
 using SantasWishlist.Domain;
 using SantasWishlistWeb.Models;
 using System.Globalization;
+using static System.Formats.Asn1.AsnWriter;
 
 
 namespace SantasWishlistWeb
@@ -56,6 +58,15 @@ namespace SantasWishlistWeb
 
             
             app.UseAuthentication();
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                using (var context = scope.ServiceProvider.GetService<SantasWishlistContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }       
+
             DataSeeder.SeedRolesAndUsers(roleManager, userManager);
             app.UseAuthorization();
 
