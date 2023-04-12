@@ -26,11 +26,7 @@ namespace SantasWishlistWeb.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginForm loginForm)
-        {
-            if(loginForm.UserName != "Kerstman")
-            {
-                loginForm.Password = loginForm.Password.ToLower();
-            }
+        {            
             var correctCredentials = await CheckCredentialsCorrect(loginForm);
             
             if (correctCredentials)
@@ -65,6 +61,11 @@ namespace SantasWishlistWeb.Controllers
 
         private async Task<bool> CheckCredentialsCorrect(LoginForm loginForm)
         {
+            if (loginForm.UserName != "Kerstman")
+            {
+                loginForm.Password = loginForm.Password.ToLower();
+            }
+
             var result = await _signInManager.PasswordSignInAsync(loginForm.UserName,
                    loginForm.Password, true, false);
             
