@@ -78,14 +78,14 @@ namespace SantasWishlist.Test.Viewmodels
         }
 
         [TestMethod()]
-        public void GetNamesList_InvalidInputReturnsEmptyList_ReturnsTrue()
+        public void GetNamesList_SingleNameReturnsListOfOneName_ReturnsTrue()
         {
-            _testForm.NamesInput = "BobJanKeesWillem";
+            _testForm.NamesInput = "Bob";
 
-            bool namesListIsEmpty = _testForm.GetNamesList().Count == 0;
+            bool namesListsAreEqual = _testForm.GetNamesList().SequenceEqual(new List<string> { "bob" });
 
-            Assert.IsTrue(namesListIsEmpty);
-        }
+            Assert.IsTrue(namesListsAreEqual);
+        }        
 
         [TestMethod]
         public void Validate_ReturnsNoError_WhenNoDuplicateOrExistingUserNames()

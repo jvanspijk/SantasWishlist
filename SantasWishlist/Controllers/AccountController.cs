@@ -49,6 +49,7 @@ namespace SantasWishlistWeb.Controllers
             }
             else
             {
+                ModelState.AddModelError("", "Onjuiste inloggegevens.");
                 return View();
             }
         }
@@ -60,14 +61,16 @@ namespace SantasWishlistWeb.Controllers
         }
 
         private async Task<bool> CheckCredentialsCorrect(LoginForm loginForm)
-        {
+        {            
+            string userName = loginForm.UserName;
+            string password = loginForm.Password;
             if (loginForm.UserName != "Kerstman")
             {
-                loginForm.Password = loginForm.Password.ToLower();
+                password = password.ToLower();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(loginForm.UserName,
-                   loginForm.Password, true, false);
+            var result = await _signInManager.PasswordSignInAsync(userName,
+                   password, true, false);
             
             if (result.Succeeded)
             {

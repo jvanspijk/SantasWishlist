@@ -16,9 +16,9 @@ namespace SantasWishlistWeb.Controllers
         public RegisterController(UserManager<SantasWishlistUser> userManager)
         {
             _userManager = userManager;            
-        }      
+        }
 
-        
+        [Authorize(Roles = "Santa")]
         public IActionResult Create()
         {            
             return View();
@@ -26,17 +26,26 @@ namespace SantasWishlistWeb.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Santa")]
         public IActionResult Create(RegisterForm form)
         {         
             if(!ModelState.IsValid)
             {
                 return View(form);
-            }
+            }         
 
             try
             {
-                CreateUsers(form);                
-                return RedirectToAction("Success", form);
+                bool createSuccess = CreateUsers(form);
+                if(createSuccess)
+                {
+                    return RedirectToAction("Success", form);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Accounts creëren mislukt.");
+                    return View(form);
+                }
             }
             catch
             {
@@ -45,39 +54,55 @@ namespace SantasWishlistWeb.Controllers
             }
         }
 
-        
+        [Authorize(Roles = "Santa")]
         public IActionResult Success(RegisterForm form)
         {
             return View(form);
-        }    
+        }
         
-        private void CreateUsers(RegisterForm form)
+        private bool CreateUsers(RegisterForm form)
         {
-            var hasher = new PasswordHasher<IdentityUser>();
-
             var userNames = form.GetNamesList();
+            if(userNames.Count == 0) 
+            {
+                return false;
+            }
             foreach (var name in userNames)
             {                
                 SantasWishlistUser user = new();
-                user.UserName = name;                       
-                user.PasswordHash = hasher.HashPassword(user, form.Password.ToLower());
+                user.UserName = name;           
                 user.WasGood = form.WereGood;
                 user.SentWishlist = false;
-
-                CreateUser(user);
-            }  
-            
+                
+                if(CreateUser(user, form.Password.ToLower()) == false)
+                {
+                    return false;
+                }
+            }
+            return true;            
         }
 
-        private bool CreateUser(SantasWishlistUser user)
+        private bool CreateUser(SantasWishlistUser user, string password)
         {
             const string roleName = "Child";
-            IdentityResult userResult = _userManager.CreateAsync(user).Result;
-            if(userResult.Succeeded)
+            if (_userManager.FindByNameAsync(user.UserName).Result != null)
             {
-                _userManager.AddToRoleAsync(user, roleName).Wait();
-                return true;
+                return false;
             }
+            try
+            {
+                IdentityResult userResult = _userManager.CreateAsync(user, password).Result;
+                if (userResult.Succeeded)
+                {
+                    _userManager.AddToRoleAsync(user, roleName).Wait();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+           
             return false;
         }
         

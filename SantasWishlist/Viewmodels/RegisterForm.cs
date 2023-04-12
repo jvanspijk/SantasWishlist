@@ -58,7 +58,10 @@ namespace SantasWishlistWeb.Viewmodels
                 }
                 return names.ToList();
             }
-
+            else
+            {
+                namesList.Add(NamesInput.ToLower());
+            }
             return namesList;            
         }
 

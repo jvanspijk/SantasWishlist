@@ -34,7 +34,15 @@ namespace SantasWishlistWeb
             services.AddControllersWithViews();
             services.ConfigureApplicationCookie(options => options.LoginPath = "/login");
             services.AddIdentity<SantasWishlistUser, IdentityRole>().AddEntityFrameworkStores<SantasWishlistContext>().AddDefaultTokenProviders();
-            
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            });
+
         }
         public void ConfigureTestServices(IServiceCollection services)
         {
