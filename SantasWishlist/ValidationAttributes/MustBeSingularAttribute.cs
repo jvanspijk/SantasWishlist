@@ -12,8 +12,7 @@ namespace SantasWishlistWeb.ValidationAttributes
             _singularGift = singularGift;
         }
         protected override ValidationResult? IsValid(object value, ValidationContext context)
-        {
-            //var wishlistService = context.GetRequiredService<WishlistService>();           
+        {                      
             List<string> gifts = value as List<string>;
 
             if (ContainsGift(gifts, _singularGift) && gifts.Count > 1)

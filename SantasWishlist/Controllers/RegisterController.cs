@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SantasWishlist.Context;
 using SantasWishlistWeb.Viewmodels;
+using System.Data;
 
 namespace SantasWishlistWeb.Controllers
 {
+    [Authorize(Roles = "Santa")]
     public class RegisterController : Controller
     {
         private UserManager<SantasWishlistUser> _userManager;
@@ -57,7 +60,7 @@ namespace SantasWishlistWeb.Controllers
             {                
                 SantasWishlistUser user = new();
                 user.UserName = name;                       
-                user.PasswordHash = hasher.HashPassword(user, form.Password);
+                user.PasswordHash = hasher.HashPassword(user, form.Password.ToLower());
                 user.WasGood = form.WereGood;
                 user.SentWishlist = false;
 
@@ -68,9 +71,11 @@ namespace SantasWishlistWeb.Controllers
 
         private bool CreateUser(SantasWishlistUser user)
         {
+            const string roleName = "Child";
             IdentityResult userResult = _userManager.CreateAsync(user).Result;
             if(userResult.Succeeded)
             {
+                _userManager.AddToRoleAsync(user, roleName).Wait();
                 return true;
             }
             return false;
